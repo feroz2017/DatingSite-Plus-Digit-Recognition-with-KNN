@@ -9,11 +9,27 @@ Created on Tue Mar 24 10:50:32 2020
 from numpy import *
 import operator
 from io import *
+import matplotlib.pyplot as plt
+
+
 def createDataset():
     group = array([[1.0,1.1],[1.0,1.0],[0,0],[0,0.1]])
     labels = ['A','A','B','B']
-    #print('Success createDataset()')
+    print('Success createDataset()')
     return labels, group
+
+def autoNorm(dataset):
+    minVals = dataset.min(axis = 0)
+    maxVals = dataset.max(axis = 0)
+    ranges = maxVals - minVals
+    normMatrix = zeros(data.shape)
+    rows = dataset.shape[0]
+    normMatrix = dataset - tile(minVals,(rows,1))
+    normMatrix = normMatrix / tile(ranges,(rows,1))
+    print('Success autoNorm()')
+    return normMatrix,ranges,minVals
+    
+
 def fileToMatrix(filename):
     file = open(filename)
     numberOfLines = len(file.readlines())
@@ -44,12 +60,13 @@ def classify(inX, dataSet, labels, k):
         classCount[votelabel]=classCount.get(votelabel,0)+1
     sortedClassCount = sorted(classCount.items(),
                               key=operator.itemgetter(1), reverse=True)
+    print('Success classify()')
     return sortedClassCount[0]
     
 #labels,group = createDataset()
 #print(classify([0,0],group,labels,3))
-group,labels = fileToMatrix('dataset.txt')
-print(group,labels[0:20])
-
+datingDataMat,datingLabels = fileToMatrix('dataset.txt')
+normMatrix,ranges,minVals = autoNorm(datingDataMat)
+print(normMatrix)
 
 
