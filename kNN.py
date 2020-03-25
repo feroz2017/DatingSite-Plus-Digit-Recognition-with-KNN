@@ -22,7 +22,7 @@ def autoNorm(dataset):
     minVals = dataset.min(axis = 0)
     maxVals = dataset.max(axis = 0)
     ranges = maxVals - minVals
-    normMatrix = zeros(data.shape)
+    normMatrix = zeros(dataset.shape)
     rows = dataset.shape[0]
     normMatrix = dataset - tile(minVals,(rows,1))
     normMatrix = normMatrix / tile(ranges,(rows,1))
@@ -62,11 +62,22 @@ def classify(inX, dataSet, labels, k):
                               key=operator.itemgetter(1), reverse=True)
     print('Success classify()')
     return sortedClassCount[0]
-    
+def datingClassTest():
+    splitRatio = 0.1
+    retMatrix , classLabel = fileToMatrix('dataset.txt')
+    normMatrix, ranges ,minVals = autoNorm(retMatrix)
+    testCases = int(splitRatio * normMatrix.shape[0])
+    error = 0.0
+    for i in range(testCases):
+        classifierResult = classify(normMatrix[i,:],normMatrix[testCases:m,:],classLabel[testCases:m],3)
+        print('Classifier came back with: ',classifierResult,' But Original: ',classLabel[i])
+        if(classifierResult != classLabel[i]):
+            error = error + 1
+    print("Totla Error is ",error/normMatrix.shape[0])
 #labels,group = createDataset()
-#print(classify([0,0],group,labels,3))
-datingDataMat,datingLabels = fileToMatrix('dataset.txt')
-normMatrix,ranges,minVals = autoNorm(datingDataMat)
-print(normMatrix)
-
+##print(classify([0,0],group,labels,3))
+#datingDataMat,datingLabels = fileToMatrix('dataset.txt')
+#normMatrix,ranges,minVals = autoNorm(datingDataMat)
+#print(normMatrix)
+datingClassTest()
 
