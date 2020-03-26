@@ -11,6 +11,8 @@ import operator
 from io import *
 import matplotlib.pyplot as plt
 
+from os import listdir
+
 
 def createDataset():
     group = array([[1.0,1.1],[1.0,1.0],[0,0],[0,0.1]])
@@ -71,8 +73,8 @@ def datingClassTest():
     m = normMatrix.shape[0]
     for i in range(testCases):
         classifierResult = classify(normMatrix[i,:],normMatrix[testCases:m,:],classLabel[testCases:m],3)
-        print('Classifier came back with: ',classifierResult,' But Original: ',classLabel[i])
-        if(classifierResult != classLabel[i]):
+        print('Classifier came back with: ',classifierResult[0],' But Original: ',classLabel[i])
+        if(classifierResult[0] != classLabel[i]):
             error = error + 1
     print("Totla Error is %:",(error/m)*100)
 def classifyPerson():
@@ -89,10 +91,50 @@ def classifyPerson():
                                   minVals)/ranges,normMat,datingLabels,3)
     #print(classifierResult)
     print ("You will probably like this person: ",classifierResult[0])
+def imgToVector(filename):
+    file = open(filename)
+    vectorImg = zeros((1,1024))
+    for i in range(32):
+        line = file.readline() 
+        #print(line)
+        for j in range(32):
+            vectorImg[0,32*i+j] = int(line[j])
+    file.close()
+    return vectorImg
+def handwritingClassTest():
+    trainingList = listdir('digits/trainingDigits')
+    testingList = listdir('digits/testDigits')
+    trainingNum = len(trainingList)
+    trainVector = zeros((trainingNum,1024))
+    labels = []
+    for i in range(trainingNum):
+        imgname = trainingList[i]
+        img = imgname.split('.')[0]
+        label = img.split('_')[0]
+        labels.append(label)
+        trainVector[i,:] = imgToVector('digits/trainingDigits/%s' % imgname)
+    error = 0.0
+    testingNum = len(testingList)
+    for i in range(testingNum):
+        imgname =testingList[i]
+        img = imgname.split('.')[0]
+        label = img.split('_')[0]
+        testvector = imgToVector('digits/testDigits/%s' %imgname)
+        classifierResult = classify(testvector,trainVector,labels,3)
+        if (classifierResult[0]!=label):
+            error = error + 1
+        print('Classifier Resutl: ',classifierResult[0],' And Original ',label)
+    print('Error Percentage: ',(error/testingNum)*100)
+    #print(len(testingList))
+# Testing Different Functions
 #labels,group = createDataset()
 ##print(classify([0,0],group,labels,3))
 #datingDataMat,datingLabels = fileToMatrix('dataset.txt')
 #normMatrix,ranges,minVals = autoNorm(datingDataMat)
 #print(normMatrix)
 #datingClassTest()
-classifyPerson()
+#classifyPerson()
+#vectorImg=imgToVector('digits/trainingDigits/0_2.txt')
+#print(vectorImg[0,0:3])
+#handwritingClassTest()
+datingClassTest()
