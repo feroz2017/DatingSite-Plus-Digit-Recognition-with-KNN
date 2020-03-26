@@ -68,16 +68,31 @@ def datingClassTest():
     normMatrix, ranges ,minVals = autoNorm(retMatrix)
     testCases = int(splitRatio * normMatrix.shape[0])
     error = 0.0
+    m = normMatrix.shape[0]
     for i in range(testCases):
         classifierResult = classify(normMatrix[i,:],normMatrix[testCases:m,:],classLabel[testCases:m],3)
         print('Classifier came back with: ',classifierResult,' But Original: ',classLabel[i])
         if(classifierResult != classLabel[i]):
             error = error + 1
-    print("Totla Error is ",error/normMatrix.shape[0])
+    print("Totla Error is %:",(error/m)*100)
+def classifyPerson():
+    
+    #10
+    resultList = ['didntLike','smallDoses', 'largeDoses']
+    percentTats = float(input("percentage of time spent playing video games?"))
+    ffMiles = float(input("frequent flier miles earned per year?"))
+    iceCream = float(input("liters of ice cream consumed per year?"))
+    datingDataMat,datingLabels = fileToMatrix('dataset.txt')
+    normMat, ranges, minVals = autoNorm(datingDataMat)
+    inArr = array([ffMiles, percentTats, iceCream])
+    classifierResult = classify((inArr-\
+                                  minVals)/ranges,normMat,datingLabels,3)
+    #print(classifierResult)
+    print ("You will probably like this person: ",classifierResult[0])
 #labels,group = createDataset()
 ##print(classify([0,0],group,labels,3))
 #datingDataMat,datingLabels = fileToMatrix('dataset.txt')
 #normMatrix,ranges,minVals = autoNorm(datingDataMat)
 #print(normMatrix)
-datingClassTest()
-
+#datingClassTest()
+classifyPerson()
